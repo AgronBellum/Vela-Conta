@@ -13,7 +13,20 @@
   <p>Esta é a página pública de vinculação do VelaFilmes. Entre com Google para associar uma TV à sua conta. A sincronização depende de cada versão do app oferecer esse recurso.</p>
   <p>Usamos a identificação básica da conta Google e o histórico de reprodução para oferecer essa função. Não solicitamos acesso às mensagens do Gmail.</p>
   <nav aria-label="Informações do aplicativo"><a href="privacy.html">Política de Privacidade</a> · <a href="mailto:contato.deivid07@gmail.com">Contato</a></nav>
-  <button id="login" type="button">Entrar com Google</button>
+  <section class="auth-options" aria-label="Entrar na conta">
+    <h2>Entrar com email</h2>
+    <form id="email-login">
+      <label for="email">Email</label>
+      <input id="email" type="email" autocomplete="email" required>
+      <label for="password">Senha</label>
+      <input id="password" type="password" autocomplete="current-password" minlength="6" required>
+      <button id="email-submit" type="submit">Entrar</button>
+      <button id="signup" type="button" class="secondary">Criar conta</button>
+      <button id="forgot" type="button" class="link-button">Esqueci minha senha</button>
+    </form>
+    <div class="separator"><span>ou</span></div>
+    <button id="login" type="button" class="secondary">Entrar com Google</button>
+  </section>
   <form id="pair" hidden>
     <p id="identity"></p>
     <label for="code">Código exibido na sua TV</label>
