@@ -15,13 +15,18 @@
   <nav aria-label="Informações do aplicativo"><a href="privacy.html">Política de Privacidade</a> · <a href="mailto:contato.deivid07@gmail.com">Contato</a></nav>
   <section class="auth-options" aria-label="Entrar na conta">
     <h2>Entrar com email</h2>
+    <div class="auth-tabs" role="tablist" aria-label="Modo de acesso">
+      <button id="mode-login" type="button" class="tab active" role="tab" aria-selected="true">Entrar</button>
+      <button id="mode-signup" type="button" class="tab" role="tab" aria-selected="false">Criar conta</button>
+    </div>
     <form id="email-login">
       <label for="email">Email</label>
       <input id="email" type="email" autocomplete="email" required>
       <label for="password">Senha</label>
       <input id="password" type="password" autocomplete="current-password" minlength="6" required>
+      <div id="confirm-wrap" hidden><label for="confirm-password">Confirme a senha</label><input id="confirm-password" type="password" autocomplete="new-password" minlength="6"></div>
+      <p id="password-help" class="field-help" hidden>A senha precisa ter pelo menos 6 caracteres. Use uma combinação que você não utiliza em outro serviço.</p>
       <button id="email-submit" type="submit">Entrar</button>
-      <button id="signup" type="button" class="secondary">Criar conta</button>
       <button id="forgot" type="button" class="link-button">Esqueci minha senha</button>
     </form>
     <div class="separator"><span>ou</span></div>

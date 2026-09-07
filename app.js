@@ -5,8 +5,9 @@
         auth: { flowType: 'pkce', detectSessionInUrl: true, persistSession: true }
     });
     var login = document.getElementById('login'), form = document.getElementById('pair'), logout = document.getElementById('logout');
-    var emailForm = document.getElementById('email-login'), email = document.getElementById('email'), password = document.getElementById('password');
-    var emailSubmit = document.getElementById('email-submit'), signup = document.getElementById('signup'), forgot = document.getElementById('forgot');
+    var emailForm = document.getElementById('email-login'), email = document.getElementById('email'), password = document.getElementById('password'), confirmPassword = document.getElementById('confirm-password');
+    var emailSubmit = document.getElementById('email-submit'), forgot = document.getElementById('forgot'), modeLogin = document.getElementById('mode-login'), modeSignup = document.getElementById('mode-signup');
+    var confirmWrap = document.getElementById('confirm-wrap'), passwordHelp = document.getElementById('password-help'), signupMode = false;
     var code = document.getElementById('code'), approve = document.getElementById('approve');
     code.value = sessionStorage.getItem('vela-pair-code') || '';
     code.oninput = function () { sessionStorage.setItem('vela-pair-code', code.value); };
@@ -27,28 +28,41 @@
         }).catch(function () { status.textContent = 'Falha de conexão. Tente novamente.'; login.disabled = false; });
     };
     function credentialsValid() {
-        if (!email.value || !email.checkValidity() || password.value.length < 6) {
-            status.textContent = 'Informe um email válido e uma senha com pelo menos 6 caracteres.'; return false;
-        }
+        if (!email.value || !email.checkValidity()) { status.textContent = 'Informe um email válido, por exemplo nome@dominio.com.'; return false; }
+        if (password.value.length < 6) { status.textContent = 'A senha precisa ter pelo menos 6 caracteres.'; return false; }
+        if (signupMode && password.value !== confirmPassword.value) { status.textContent = 'As duas senhas não são iguais.'; return false; }
+        if (signupMode && !/[A-Za-z]/.test(password.value)) { status.textContent = 'A senha precisa conter pelo menos uma letra.'; return false; }
+        if (signupMode && !/[0-9]/.test(password.value)) { status.textContent = 'A senha precisa conter pelo menos um número.'; return false; }
         return true;
     }
-    emailForm.onsubmit = function (event) {
-        event.preventDefault(); if (!credentialsValid()) return;
-        emailSubmit.disabled = true; status.textContent = 'Entrando…';
-        client.auth.signInWithPassword({ email: email.value.trim(), password: password.value }).then(function (result) {
-            if (result.error) throw result.error;
-            status.textContent = 'Login realizado.';
-        }).catch(function (error) { status.textContent = error.message || 'Não foi possível entrar.'; })
-            .finally(function () { emailSubmit.disabled = false; });
-    };
-    signup.onclick = function () {
+    function setMode(create) {
+        signupMode = create; modeLogin.classList.toggle('active', !create); modeSignup.classList.toggle('active', create);
+        modeLogin.setAttribute('aria-selected', String(!create)); modeSignup.setAttribute('aria-selected', String(create));
+        emailSubmit.textContent = create ? 'Criar conta' : 'Entrar'; confirmWrap.hidden = !create; passwordHelp.hidden = !create;
+        password.autocomplete = create ? 'new-password' : 'current-password'; forgot.hidden = create;
+        status.textContent = create ? 'Crie sua conta com email e uma senha de pelo menos 6 caracteres, contendo letra e número.' : 'Entre com seu email e senha.';
+    }
+    modeLogin.onclick = function () { setMode(false); };
+    modeSignup.onclick = function () { setMode(true); };
+    setMode(false);
+    function createAccount() {
         if (!credentialsValid()) return;
-        signup.disabled = true; status.textContent = 'Criando sua conta…';
+        emailSubmit.disabled = true; status.textContent = 'Criando sua conta…';
         client.auth.signUp({ email: email.value.trim(), password: password.value, options: { emailRedirectTo: location.href.split('#')[0] } }).then(function (result) {
             if (result.error) throw result.error;
             status.textContent = result.data.session ? 'Conta criada e login realizado.' : 'Conta criada. Confira seu email para confirmar o cadastro.';
         }).catch(function (error) { status.textContent = error.message || 'Não foi possível criar a conta.'; })
-            .finally(function () { signup.disabled = false; });
+            .finally(function () { emailSubmit.disabled = false; });
+    }
+    emailForm.onsubmit = function (event) {
+        event.preventDefault();
+        if (signupMode) { createAccount(); return; }
+        if (!credentialsValid()) return;
+        emailSubmit.disabled = true; status.textContent = 'Entrando…';
+        client.auth.signInWithPassword({ email: email.value.trim(), password: password.value }).then(function (result) {
+            if (result.error) throw result.error; status.textContent = 'Login realizado.';
+        }).catch(function (error) { status.textContent = error.message || 'Email ou senha inválidos.'; })
+            .finally(function () { emailSubmit.disabled = false; });
     };
     forgot.onclick = function () {
         if (!email.value || !email.checkValidity()) { status.textContent = 'Informe seu email para receber a recuperação.'; return; }
