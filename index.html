@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer"><title>Vincular TV · Vela</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body><main>
+  <div class="brand">VELA</div><h1>Seu próximo play começa aqui.</h1>
+  <p>Entre com sua conta Google e vincule a TV para compartilhar seu histórico.</p>
+  <button id="login" type="button">Entrar com Google</button>
+  <form id="pair" hidden>
+    <p id="identity"></p>
+    <label for="code">Código exibido na sua TV</label>
+    <input id="code" name="code" autocomplete="off" autocapitalize="characters" maxlength="14" placeholder="ABCD-1234-EF56" required>
+    <button id="approve" type="submit">Vincular esta TV</button>
+    <p>Confirme somente o código que aparece no seu próprio aparelho.</p>
+  </form>
+  <p id="status" role="status" aria-live="polite"></p>
+  <button id="logout" type="button" hidden>Sair no celular</button>
+</main></body></html>
